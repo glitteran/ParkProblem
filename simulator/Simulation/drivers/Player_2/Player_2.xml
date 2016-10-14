@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    file                 : chenyi.xml
+    created              : 2014年 05月 20日 星期二 20:15:17 EDT
+    copyright            : (C) 2002 Chenyi Chen
+-->
+
+<!--    This program is free software; you can redistribute it and/or modify  -->
+<!--    it under the terms of the GNU General Public License as published by  -->
+<!--    the Free Software Foundation; either version 2 of the License, or     -->
+<!--    (at your option) any later version.                                   -->
+
+<!DOCTYPE params SYSTEM "../../libs/tgf/params.dtd">
+<params name="chenyi2" type="robotdef">
+  <section name="Robots">
+    <section name="index">
+      <section name="1">
+	<attstr name="name" val="Player 2"></attstr>
+	<attstr name="desc" val=""></attstr>
+	<attstr name="team" val=""></attstr>
+	<attstr name="author" val="Chenyi2 Chen"></attstr>
+	<attstr name="type" val="algorithm"/>
+<!--<attstr name="car name" val="kc-gt40"></attstr> 
+	<attstr name="category" val="Historic"></attstr>
+	<attstr name="car name" val="pw-imprezawrc"></attstr>
+	<attstr name="car name" val="pw-focuswrc"></attstr>
+	<attstr name="car name" val="pw-evoviwrc"></attstr>
+	<attstr name="car name" val="pw-evoviwrc"></attstr>
+	<attstr name="car name" val="car7-trb1"></attstr>
+-->
+	<attstr name="car name" val="car6-trb1"></attstr>
+	<attnum name="race number" val="2"></attnum>
+	<attnum name="red" val="0.9"></attnum>
+	<attnum name="green" val="0.1"></attnum>
+	<attnum name="blue" val="0.1"></attnum>
+      </section>
+    </section>
+  </section>
+</params>
