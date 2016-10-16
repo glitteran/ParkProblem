@@ -19,6 +19,13 @@
 #define INPUT_AICAR_SIZE			20
 #define INPUT_FORWARD_TRACK_SIZE	20
 
+float C;  //차선의 위치 및 차량의 차선 변경 등의 케이스에 따라 유동적인 값
+float C2;	//최적 속도를 구할 때 운전 조건하에 따른 교정계수
+float D; //최적 속도를 구할 때 운전 조건하에 따른 교정계수
+float V; //앞차와 거리를 고려한 최적 속도
+float Vmax = 100;	//최대속도
+
+
 struct shared_use_st
 {
 	// System Value
@@ -55,18 +62,62 @@ struct shared_use_st
 	double accelCmd;
 	double brakeCmd;
 	int    backwardCmd;
+
+	
 };
 
 int controlDriving(shared_use_st *shared){
 	if (shared == NULL) return -1;
 
 	//Input : shared_user_st
+	//steerCmd 핸들 조작시 움직여야 할 각도 [-1 1]
+	//accelCmd 속도 상승이 필요할 때 조절 수치 [0 1]
+	//brakeCmd 속도 하락이 필요할 때 조절 수치 [0 1]
+	//backwardCmd 전진/후진 [0이면 전진 0이아니면 후진]
+
+	//speed 현재주행속도
+	//damage 현재 차량의 누적 데미지 점수
+	//damage_max 허용 데미지 최대치
+	//my_rank 전체 차량 중 나의 순위
+	//total_car_num 형재 주행 중인 전체 차량 수
+	//opponent_rank 상대편 순위
+
+	/**차량정보**/
+	//dist_cars 전후방차량,각차량의 toMiddle값 전후방 100미터이내
+	//dist_cars[0,2,4,6,8] 전방 차량과의 거리 distcars[1,3,5,7,9] 각 전방 차량의 toMiddle값
+	//dist_cars[10,12,14,16,18] 후방 차량과의 거리 distcars[11,13,15,17,19] 각 후방 차량의 toMiddle값
+	//주변 차량을 인지하고 충돌 예측 및 회피를 판단해라
+	//차량 중심 가운데를 영점으로 왼쪽은 음수(-), 오른쪽은 양수(+)로 미터단위
+	
+	/**트랙정보**/
+	//8~10미터 길이를 가지는 구간으로 제공 [-3.14 3.14]
+	//전방 20개 구간에 대한 정보(위치와 각도)
+	//track_current_angle 도로 방향과 지도 중심선 사이의 파이값 : 현재 트랙의 각도 정보
+	//track_angles[20] 전방 20개 트랙의 각도정보
+	//track_dists[20] 시작점에서 부터 각 트랙 중심점까지의 거리
+	//angle 차량의 정면과 도로 방향 사이의 파이값 [-3.14 좌측으로 회전 3.14 그 반대]
+	//toMiddle 차량 중심에서 도로 전체 중심까지의 거리
+	//track_width 트랙의 폭
+	//toMiddle,track_width는 도로상에서 현재 위치를 인지하는데 활용. 트랙 이탈시 차선 복귀, 차선 변경을 위해 사용
+	//toStart : 출발점에서 현재 차량의 위치까지 거리
+	//dist_track 전체 트랙의 길이(1lap기준)
+	//track_dist_straight 차량 전방의 연속된 직진 트랙의 길이
+	//track_curve_type 차량 전방의 직진이 끝나는 지점의 커브 종류 
+	//CURVE_TYPE_RIGHT(1)  우회전코스 CURVE_TYPE_LEFT (2) 좌회전코스
+	//track_dist_straight, track_curve_type 트랙 유형파악하고 주행 전략을 수립할 때 사용
+
+	
+	C = 1;	//차선의 위치 및 차량의 차선 변경 등의 케이스에 따라 유동적인 값
+	V = Vmax * (1 - exp(-C2 / Vmax*shared->dist_cars[0] - D));
+
+	
 
 	//TO-DO : 알고리즘을 작성하세요.
 
 	//Output : 4개의 Output Cmd 값을 도출하세요.
-	shared->steerCmd = 0.0;
-	shared->accelCmd = 0.2;
+	//shared->steerCmd = 0.0;
+	shared->steerCmd = C * (shared->angle - shared->toMiddle / shared->track_width);
+	shared->accelCmd = 1;
 	shared->brakeCmd = 0.0;
 	shared->backwardCmd = GEAR_FORWARD;
 
